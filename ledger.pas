@@ -7,6 +7,9 @@ interface
 uses
   syncobjs;
 
+var
+  Critical : TCriticalSection;
+
 type
 
   TLedgerType = (
@@ -66,7 +69,6 @@ type
     FLastBalance : T;
     FCredits : TLedgerEntryArray<T>;
     FDebits : TLedgerEntryArray<T>;
-    FCritical : TCriticalSection;
     function GetBalance: T;
     function GetCount(const AType: TLedgerTypes): Cardinal;
     function GetCredits: TLedgerEntryArray<T>;
@@ -94,7 +96,6 @@ type
     function Clear(Const AType:TLedgerType):ILedger<T>;overload;
     function Clear:ILedger<T>;overload;
     constructor Create;virtual;
-    destructor Destroy;override;
   end;
 
 implementation
@@ -140,7 +141,7 @@ begin
   LEntry.TimeStamp:=ATimeStamp;
   LEntry.Amount:=AAmount;
   LEntry.LedgerType:=AType;
-  FCritical.Enter;
+  Critical.Enter;
   try
     try
       //depending on type, put record in proper array
@@ -161,7 +162,7 @@ begin
       raise E;
     end;
   finally
-    FCritical.Leave;
+    Critical.Leave;
   end;
 end;
 
@@ -189,7 +190,7 @@ end;
 function TLedgerImpl<T>.Clear(const AType: TLedgerType):ILedger<T>;
 begin
   Result:=Self as ILedger<T>;
-  FCritical.Enter;
+  Critical.Enter;
   try
     DoBeforeClear(AType);
     if AType=ltCredit then
@@ -204,7 +205,7 @@ begin
     end;
     DoAfterClear(AType);
   finally
-    FCritical.Leave;
+    Critical.Leave;
   end;
 end;
 
@@ -233,14 +234,11 @@ end;
 
 constructor TLedgerImpl<T>.Create;
 begin
-  FCritical:=TCriticalSection.Create;
 end;
 
-destructor TLedgerImpl<T>.Destroy;
-begin
-  FCritical.Free;
-  inherited Destroy;
-end;
-
+initialization
+  Critical:=TCriticalSection.Create;
+finalization
+  Critical.Free;
 end.
 
