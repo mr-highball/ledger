@@ -306,7 +306,11 @@ begin
     if DoGetPositive(FLastBalance) then
       LType:=ltCredit
     else
+    begin
       LType:=ltDebit;
+      //we record debits as positive numbers so multiply by -1
+      LEntry:=LEntry * -1;
+    end;
     Result:=RecordEntry(LEntry,LType,Now,LID);
   finally
     Critical.Leave;
