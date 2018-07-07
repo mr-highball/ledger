@@ -26,6 +26,8 @@ program ledger_test;
 {$mode delphi}{$H+}
 
 uses
+  DateUtils,
+  SysUtils,
   ledger,
   ledger.standard;
 
@@ -78,6 +80,28 @@ begin
       WriteLn(LEntries[I].Entry);
 end;
 
+procedure TestMany;
+const
+  MANY = 1000000;
+var
+  I:Integer;
+  LTest:IIntLedger;
+  LStart:TDateTime;
+begin
+  WriteLn('TestMany');
+  LTest:=NewIntLedger;
+  LStart:=Now;
+  for I:=0 to MANY do
+    LTest.RecordEntry(I,ltCredit);
+  for I:=0 to MANY do
+    LTest.RecordEntry(I,ltDebit);
+  WriteLn(
+    'Count:',LTest.Count[[]],
+    ' Balance:',LTest.Balance,
+    ' TimeMSecs:',MilliSecondsBetween(Now,LStart)
+  );
+end;
+
 procedure TestClear;
 begin
   WriteLn('TestClear - should be 0');
@@ -91,6 +115,7 @@ begin
   TestSimple;
   TestFilter;
   TestClear;
+  TestMany;
   ReadLn;
 end.
 
