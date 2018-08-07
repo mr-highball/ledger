@@ -169,17 +169,17 @@ begin
     Result:=Length(FDebits);
 end;
 
-function TLedgerImpl<T>.GetCredits: TLedgerEntryArray;
+function TLedgerImpl<T>.GetCredits: TLedgerEntryArray<T>;
 begin
   Result:=FCredits;
 end;
 
-function TLedgerImpl<T>.GetDebits: TLedgerEntryArray;
+function TLedgerImpl<T>.GetDebits: TLedgerEntryArray<T>;
 begin
   Result:=FDebits;
 end;
 
-function TLedgerImpl<T>.GetEntries(const AID: String): TLedgerEntry;
+function TLedgerImpl<T>.GetEntries(const AID: String): TLedgerEntry<T>;
 var
   I:Integer;
   LPair:TEntryPair;
