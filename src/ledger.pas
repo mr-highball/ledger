@@ -206,6 +206,7 @@ function TLedgerImpl<T>.RecordEntry(const AEntry: T; const AType: TLedgerType;
   const ATimestamp: TDateTime; out ID: String): ILedger<T>;
 var
   LEntry:TLedgerEntry<T>;
+  LPair:TEntryPair;
 begin
   Result:=Self as ILedger<T>;
   //set local record
@@ -222,14 +223,20 @@ begin
         SetLength(FCredits,Succ(Length(FCredits)));
         FCredits[High(FCredits)]:=LEntry;
         FLastBalance:=FLastBalance + AEntry;
+        LPair.LedgerType:=ltCredit;
+        LPair.Index:=High(FCredits);
       end
       else
       begin
         SetLength(FDebits,Succ(Length(FDebits)));
         FDebits[High(FDebits)]:=LEntry;
         FLastBalance:=FLastBalance - AEntry;
+        LPair.LedgerType:=ltDebit;
+        LPair.Index:=High(FDebits);
       end;
+      //store the pair in the map
       ID:=LEntry.ID;
+      FMap.Add(ID,LPair);
     except on E:Exception do
       raise E;
     end;
