@@ -188,7 +188,8 @@ begin
   try
     if not FMap.Sorted then
       FMap.Sort;
-    if not FMap.Find(AID,I) then
+    I:=FMap.IndexOf(AID);
+    if I<0 then
       raise Exception.Create(AID + ' is not a valid ID');
     LPair:=FMap.Data[I];
     //now use the type of the pair to determine which array to use
