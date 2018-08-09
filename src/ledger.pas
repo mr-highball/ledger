@@ -342,7 +342,7 @@ begin
     else
     begin
       for I:=0 to High(FDebits) do
-        FMap.Remove(FCredits[I].ID);
+        FMap.Remove(FDebits[I].ID);
       SetLength(FDebits,0);
     end;
   finally
