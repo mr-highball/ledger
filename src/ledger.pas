@@ -345,6 +345,9 @@ begin
         FMap.Remove(FDebits[I].ID);
       SetLength(FDebits,0);
     end;
+
+    //make sure to set the last balance back to the default state
+    FLastBalance := DoGetEmptyBalance;
   finally
     Critical.Leave;
   end;
