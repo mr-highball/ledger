@@ -345,19 +345,21 @@ begin
         FMap.Remove(FDebits[I].ID);
       SetLength(FDebits,0);
     end;
-
-    //make sure to set the last balance back to the default state
-    FLastBalance := DoGetEmptyBalance;
   finally
     Critical.Leave;
   end;
+
+  //rebalance after a clear has been called
+  Rebalance;
   DoAfterClear(AType);
 end;
 
 function TLedgerImpl<T>.Clear:ILedger<T>;
 begin
+  Result := Self as ILedger<T>;
+
   Clear(ltCredit);
-  Result:=Clear(ltDebit);
+  Clear(ltDebit);
 end;
 
 procedure TLedgerImpl<T>.DoBeforeRecord(Const AEntry:T;Const AType:TLedgerType);
@@ -385,9 +387,11 @@ begin
   try
     //first set balance to empty
     FLastBalance:=DoGetEmptyBalance;
+
     //sum all of the credits and debits
     for I:=0 to High(FCredits) do
       FLastBalance:=FLastBalance + FCredits[I].Entry;
+
     for I:=0 to High(FDebits) do
       FLastBalance:=FLastBalance - FDebits[I].Entry;
   finally

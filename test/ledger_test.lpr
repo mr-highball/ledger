@@ -103,12 +103,16 @@ begin
 end;
 
 procedure TestClear;
+var
+  LTest : IIntLedger;
 begin
   WriteLn('TestClear - should be 0');
-  WriteLn(NewIntLedger
-    .RecordEntry(1,ltCredit)
-    .Clear
-    .Count[[]]
+  LTest := NewIntLedger;
+  WriteLn(
+    LTest
+      .RecordEntry(1,ltCredit)
+      .Clear
+      .Count[[]] + LTest.Balance
   );
 end;
 begin
